@@ -1,0 +1,9 @@
+Conversion script to update
+http://svn.gnome.org/viewvc/gtk+/trunk/gdk/gdkkeysyms.h
+from the upstream file at X.Org
+http://gitweb.freedesktop.org/?p=xorg/proto/x11proto.git;a=blob_plain;f=keysymdef.h\
+
+This script also resides at
+http://svn.gnome.org/viewvc/gtk+/trunk/gdk/gdkkeysyms-update.pl
+
+Author: Simos Xenitellis

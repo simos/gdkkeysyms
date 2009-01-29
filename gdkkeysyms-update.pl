@@ -38,18 +38,18 @@ else
 }
 
 
-if ( -f "gdkkeysyms.h" )
-{
-	print "There is already a gdkkeysyms.h file in this directory. We are not overwriting it.\n";
-	print "Please move it somewhere else in order to run this script.\n";
-	die "Exiting...\n\n";
-}
+#if ( -f "gdkkeysyms.h" )
+#{
+#	print "There is already a gdkkeysyms.h file in this directory. We are not overwriting it.\n";
+#	print "Please move it somewhere else in order to run this script.\n";
+#	die "Exiting...\n\n";
+#}
 
 # Source: http://cvs.freedesktop.org/xorg/xc/include/keysymdef.h
 die "Could not open file keysymdef.h: $!\n" unless open(IN_KEYSYMDEF, "<:utf8", "keysymdef.h");
 
 # Output: gtk+/gdk/gdkkeysyms.h
-die "Could not open file gdkkeysyms.h: $!\n" unless open(OUT_GDKKEYSYMS, ">:utf8", "gdkkeysyms.h");
+die "Could not open file gdkkeysyms.h: $!\n" unless open(OUT_GDKKEYSYMS, ">:utf8", "gdkkeysyms.h.NEW");
 
 print OUT_GDKKEYSYMS<<EOF;
 /* GDK - The GIMP Drawing Kit
@@ -107,10 +107,11 @@ while (<IN_KEYSYMDEF>)
 	$keysymelements[1] =~ s/^XK_/GDK_/g;
 
 	$value = hex($keysymelements[2]);
-	#if ($value >= 0x1000000)
-	#{
-	#	$value = $value - 0x1000000;
-	#}
+	if ($value >= 0x1000000)
+	{
+		print "WARNING: Got value > 0x1000000, keysym $keysymelements[1]: values $value, subtracting 0x1000000\n";
+		$value -= 0x1000000;
+	}
 	if (exists($keysyms{$keysymelements[1]}))
 	{
 		print "ERROR: Got DUP for keysym $keysymelements[1]: values $value and $keysyms{$keysymelements[1]}\n";
@@ -145,4 +146,4 @@ print OUT_GDKKEYSYMS<<EOF;
 #endif /* __GDK_KEYSYMS_H__ */
 EOF
 
-printf "We just finished converting keysymdef.h to gdkkeysyms.h\nThank you\n";
+printf "\nWe just finished converting keysymdef.h to gdkkeysyms.h.NEW\nRename gdkkeysyms.h.NEW to gdkkeysyms.h\nThank you\n";
